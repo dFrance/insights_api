@@ -3,8 +3,14 @@ const { customAlphabet } = require('nanoid');
 
 class CardController {
     index(req, res) {
+        const page = req.query.page;
+        const limit = req.query.limit;
+        const startIndex = (page - 1) * limit
+        const endIndex = page * limit
+ 
         Card.find({}).then((cards) => {
-            return res.json(cards)
+            const resultQuery = cards.slice(startIndex, endIndex)
+            return res.json(resultQuery)
         })
         .catch((err) => {
             return res.status(200).json({
@@ -33,6 +39,7 @@ class CardController {
 
 
         Card.create(data, (err) => {
+            console.log(err)
             if(err){
                 return res.status(400).json({
                     error: true,

@@ -20,16 +20,19 @@ class CategoryController {
         const nanoid = customAlphabet('123456789ABCDEFGHIJKLMNOPQRSTUVXYZ', 6)
         let id = nanoid(6)
         let findDuplicate = await Category.findOne({ title })
+        
         if(findDuplicate){
             return res.status(400).json({
                 error: true,
                 message: "Nome de categoria já cadastrado!"
             })
         }
+
         const data = {
             title,
             id
         }
+
         await Category.create(data, (err) => {
             console.log(err)
             if(err){
