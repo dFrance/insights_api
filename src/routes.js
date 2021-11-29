@@ -1,13 +1,17 @@
 const { Router } = require('express')
-
+const multer = require('multer')
 const CardController = require('./Controller/CardController')
-const CategoryController = require('./Controller/CategoryController')
+const CategoryController = require('./Controller/CategoryController');
+const ImportController = require('./Controller/ImportController');
 
-const routes = new Router();
+const router = new Router();
+const multerConfig = multer();
 
-routes.get('/cards', CardController.index);
-routes.post('/cards', CardController.store);
-routes.get('/category', CategoryController.index);
-routes.post('/category', CategoryController.store);
 
-module.exports = routes;
+router.post('/importcsv', multerConfig.single("file"), ImportController.store);
+router.get('/cards', CardController.index);
+router.post('/cards', CardController.store);
+router.get('/category', CategoryController.index);
+router.post('/category', CategoryController.store);
+
+module.exports = router;
