@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  db:
+    image: mongo:latest
+    container_name: db
+    restart: always
+    ports:
+      - 27017:27017
+  api:
+    image: node:16.0
+    container_name: api
+    restart: always
+    depends_on:
+      - db
+    build: .
+    ports: 
+      - 8081:8081
+    command: yarn start

@@ -8,9 +8,9 @@ class Connection {
 
     
     dataBaseConnectionMongoDB(){
-        mongoose.connect('mongodb://localhost:27017/insights')
+        mongoose.connect('mongodb+srv://diFrance:Gab24115682@cluster0.5suzr.mongodb.net/insights')
         .then(()=>{console.log('Conectado ao banco de dados com sucesso.')})
-        .catch((err) => {console.log('Houve um problema ao conectar ao banco de dados.')})
+        .catch((err) => {console.log(err)})
     }
 }
 
