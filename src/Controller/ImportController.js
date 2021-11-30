@@ -56,8 +56,9 @@ class ImportController {
                     "category": [...categories],
                     "id": id
                 }
-            } else {
-                //Começa o tratamento de linha caso tenha uma categoria
+            } 
+            //Começa o tratamento de linha caso tenha uma categoria
+            else {
                 const alreadyRegisterTheCategory = await Category.findOne({ title: productLineSplit[1] })
                 if (!alreadyRegisterTheCategory) {
                     const nanoid = customAlphabet('123456789ABCDEFGHIJKLMNOPQRSTUVXYZ', 6)
@@ -77,7 +78,7 @@ class ImportController {
                 }
 
             }
-
+            //Inseri os cards no mongo
             Card.create(dataOfRegister, (err) => {
                 if (err) {
                     return res.status(400).json({
