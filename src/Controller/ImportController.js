@@ -15,75 +15,82 @@ class ImportController {
         const productLine = readline.createInterface({
             input: readableFile
         })
+
+        let dataOfRegister = {}
+        // Começa o tratamento linha a linha
         for await (let line of productLine) {
             const productLineSplit = line.split(",")
+            let id = ''
+            let idCategory = ''
+
+            // Criação do ID Card
+            const nanoid = customAlphabet('123456789ABCDEFGHIJKLMNOPQRSTUVXYZ', 6)
+            id = nanoid(6)
+            let findDuplicate = await Card.findOne({ id })
+            if (findDuplicate) {
+                id = nanoid(6)
+            }
+
+            //Começa o tratamento da linha caso tenha mais de uma categoria
             if (productLineSplit[1].includes(';')) {
+                let categories = null
+                let alreadyRegisterTheCategory = undefined
+
                 const categorySplit = productLineSplit[1].split(";")
                 productLineSplit[1] = categorySplit
-            }
 
-            for await (let category of productLineSplit[1]){
-                const alrearyRegisteTheCategory = await Category.find({ title: category })
-                console.log(alrearyRegisteTheCategory)
-                if(alrearyRegisteTheCategory){
-                    console.log({'title': category, 'id': alrearyRegisteTheCategory[0].id})
+                //Constroi o formato de categorias
+                for await (let category of productLineSplit[1]) {
+                    alreadyRegisterTheCategory = await Category.findOne({ title: category })
+                    if (alreadyRegisterTheCategory !== null) {
+                        if (categories === null) {
+                            categories = { 'title': category, 'idCategory': alreadyRegisterTheCategory.idCategory }
+                        } else {
+                            categories = [{ ...categories }, { 'title': category, 'idCategory': alreadyRegisterTheCategory.idCategory }]
+                        }
+                    }
                 }
+                // Construção do Data para ser adicionado ao banco
+                dataOfRegister = {
+                    "title": productLineSplit[0],
+                    "category": [...categories],
+                    "id": id
+                }
+            } else {
+                //Começa o tratamento de linha caso tenha uma categoria
+                const alreadyRegisterTheCategory = await Category.findOne({ title: productLineSplit[1] })
+                if (!alreadyRegisterTheCategory) {
+                    const nanoid = customAlphabet('123456789ABCDEFGHIJKLMNOPQRSTUVXYZ', 6)
+                    idCategory = nanoid(6)
+                    let findDuplicate = await Card.findOne({ id: idCategory })
+                    if (findDuplicate) {
+                        idCategory = nanoid(6)
+                    }
+                } else {
+                    idCategory = alreadyRegisterTheCategory.idCategory
+                }
+
+                dataOfRegister = {
+                    "title": productLineSplit[0],
+                    "category": [{ "idCategory": idCategory, "title": productLineSplit[1] }],
+                    "id": id
+                }
+
             }
 
-            // const alrearyRegisteTheCategory = await Category.find({ title: productLineSplit[1] })
-            
-            // let dataOfRegister = {}
-            // let idCard = ''
-            // let idCategory = ''
-            // if (!alrearyRegisteTheCategory) {
-            //     const nanoid = customAlphabet('123456789ABCDEFGHIJKLMNOPQRSTUVXYZ', 6)
-            //     idCategory = nanoid(6)
-            //     let findDuplicate = await Card.findOne({ id: idCategory })
-            //     if (findDuplicate) {
-            //         idCategory = nanoid(6)
-            //     }
-            // } else {
-            //     idCategory = alrearyRegisteTheCategory.id
-            // }
-            // const viewTypeCategory = typeof (productLineSplit[1])
-            // // To create dataOfRegister
-            // const nanoid = customAlphabet('123456789ABCDEFGHIJKLMNOPQRSTUVXYZ', 6)
-            //     idCard = nanoid(6)
-            //     let findDuplicate = await Card.findOne({ id: idCard })
-            //     if (findDuplicate) {
-            //         idCard = nanoid(6)
-            //     }
-            // if (viewTypeCategory == "string") {
-            //     dataOfRegister = {
-            //         "title": productLineSplit[0],
-            //         "category": [{ "idCategory": idCategory, "title": productLineSplit[1], "_id": false }],
-            //         "id": idCard
-            //     }
-            // } else {
-            //     let splitCategoriesName = productLineSplit[1].map((category) => {
-            //         return { "idCategory": idCategory, "title": category}
-            //     })
-            //     dataOfRegister = {
-            //         "title": productLineSplit[0],
-            //         "category": {...splitCategoriesName, "_id": false},
-            //         "id": idCard
-            //     }
-            // }
-            // Card.create(dataOfRegister, (err) => {
-            //     console.log("Erro abaixo")
-            //     console.log(err)
-            //     if (err) {
-            //         return res.status(400).json({
-            //             error: true,
-            //             message: "Erro ao cadastrar um novo insight!"
-            //         })
-            //     }
-            //     return res.status(200).json({
-            //         error: false,
-            //         message: `Insight: ${productLineSplit[0]} cadastrado com sucesso.`
-            //     })
-            // })
+            Card.create(dataOfRegister, (err) => {
+                if (err) {
+                    return res.status(400).json({
+                        error: true,
+                        message: "Erro ao cadastrar um novo insight!"
+                    })
+                }
+            })
         }
+        return res.status(200).json({
+            error: false,
+            message: `Insight upados via CSV.`
+        })
     }
 }
 

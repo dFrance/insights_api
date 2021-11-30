@@ -3,11 +3,10 @@ const mongoose = require('mongoose')
 const Card = mongoose.Schema({
     title: { type: String, required: true, },
     category: [{
-        title: { type: String, required: true },
-        idCategory: { type: String, required: true },
-        _id: false
+        title: { type: String },
+        idCategory: { type: String },
     }],
-    id: { type: String, required: true, unique: true },
+    id: { type: String, required: true },
 }, {
     timestamps: true,
 })
