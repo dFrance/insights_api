@@ -8,7 +8,7 @@ const Card = mongoose.Schema({
     }],
     id: { type: String, required: true },
 }, {
-    // timestamps: true,
+    timestamps: true,
 })
 
 module.exports = mongoose.model('card', Card)

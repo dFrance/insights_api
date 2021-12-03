@@ -7,9 +7,9 @@ class CategoryController {
             return res.json(category)
         })
         .catch((err) => {
-            return res.status(200).json({
-                error: false,
-                message: 'Entrou no get Card'
+            return res.status(400).json({
+                error: true,
+                message: 'Erro ao acessar o banco de dados.'
             })
         })
 
@@ -17,10 +17,15 @@ class CategoryController {
 
     async store(req, res) {
         const { title } = req.body;
+        if (title === ''){
+            return res.status(400).json({
+                error: true,
+                message: "Nome da categoria precisa ser definido."
+            })
+        }
         const nanoid = customAlphabet('123456789ABCDEFGHIJKLMNOPQRSTUVXYZ', 6)
-        let id = nanoid(6)
+        let idCategory = nanoid(6)
         let findDuplicate = await Category.findOne({ title })
-        
         if(findDuplicate){
             return res.status(400).json({
                 error: true,
@@ -30,7 +35,7 @@ class CategoryController {
 
         const data = {
             title,
-            id
+            idCategory
         }
 
         await Category.create(data, (err) => {
