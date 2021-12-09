@@ -1,6 +1,7 @@
 const request = require('supertest');
 const app = require('../../app');
 const Card = require('../../Models/Card');
+const Category = require('../../Models/Category');
 const truncate = require('../utils/truncate')
 
 describe('Should get the cards', () => {
@@ -36,11 +37,14 @@ describe('Should post cards', () => {
         const response = await request(app).post('/cards').send({ title: "Testando um post." })
         expect(response.body.message).toMatch("Insight: Testando um post. cadastrado com sucesso.")
     })
-    // it('Should post a card with category', async () => {
-    //     const response = await request(app).post('/cards')
-    //     .send({ 
-    //         title: "Testando um post com categoria.", 
-    //         category: [{idCategory: "MGOS9E", title: "TEMPORADA"}] })
-    //     expect(response.body.message).toMatch("Insight: Testando um post com categoria. cadastrado com sucesso.")
-    // })
+    it('Should post a card with category', async () => {
+        const {idCategory, title} = await Category.findOne({})
+        console.log(idCategory, title)
+        const response = await request(app).post('/cards')
+        .send({ 
+            title: "Testando um post com categoria.", 
+            category: [{idCategory, title}]
+        })
+        expect(response.body.message).toMatch("Insight: Testando um post com categoria. cadastrado com sucesso.")
+    })
 })
