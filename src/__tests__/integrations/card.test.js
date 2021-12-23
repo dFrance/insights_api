@@ -39,7 +39,6 @@ describe('Should post cards', () => {
     })
     it('Should post a card with category', async () => {
         const {idCategory, title} = await Category.findOne({})
-        console.log(idCategory, title)
         const response = await request(app).post('/cards')
         .send({ 
             title: "Testando um post com categoria.", 
