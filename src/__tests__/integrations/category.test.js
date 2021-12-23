@@ -22,7 +22,6 @@ describe('Should get the categories', () => {
         })
         it('Should not post a category exist', async () => {
             const response = await request(app).post('/category').send({ title: "TEMPORADA" })
-            console.log(response.body.message)
             expect(response.body.message).toMatch('Nome de categoria já cadastrado!')
         })
     })

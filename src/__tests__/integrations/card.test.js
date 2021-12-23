@@ -2,7 +2,6 @@ const request = require('supertest');
 const app = require('../../app');
 const Card = require('../../Models/Card');
 const Category = require('../../Models/Category');
-const truncate = require('../utils/truncate')
 
 describe('Should get the cards', () => {
     it('Should get a response status 200', async () => {
