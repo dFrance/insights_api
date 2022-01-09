@@ -28,7 +28,7 @@ describe('Should post cards', () => {
          const response = await request(app).post('/cards').send({ title: "Testando um post.", category: [{idCategory: "MGOS9E", title: "wrongTitle"}] })
          expect(response.body.message).toMatch("Uma das categorias não existe.")
     })
-    it('Should not post a card with WRONG category id', async () => {
+    it('Should not post a card with wrong category id', async () => {
          const response = await request(app).post('/cards').send({ title: "Testando um post.", category: [{idCategory: "wrongID", title: "TEMPORADA"}] })
          expect(response.body.message).toMatch("Uma das categorias não existe.")
     })
